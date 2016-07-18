@@ -68,6 +68,7 @@
       </ul>
 
       <h4>Demo</h4>
+
       <div class="tests">
         <div class="result">
           <json-formatter json="complex" open="1"></json-formatter>
@@ -243,6 +244,20 @@
     </label>
     <div class="result" ng-init="giantOpen = 1;">
       <json-formatter json="giant" open="100"></json-formatter>
+    </div>
+
+    <h4>Open/Close All</h4>
+
+    <button json-formatter-open-all>
+      Open All!
+    </button>
+
+    <button json-formatter-close-all>
+      Close All!
+    </button>
+
+    <div class="result" ng-init="giantOpen = 1;">
+      <json-formatter json="complex" open="0"></json-formatter>
     </div>
   </div>
 </div>
