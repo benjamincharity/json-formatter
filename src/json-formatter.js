@@ -1,3 +1,4 @@
+/* global console */
 'use strict';
 
 angular.module('jsonFormatter', ['RecursionHelper'])
@@ -41,7 +42,7 @@ angular.module('jsonFormatter', ['RecursionHelper'])
   };
 })
 
-.directive('jsonFormatter', ['RecursionHelper', 'JSONFormatterConfig', function jsonFormatterDirective(RecursionHelper, JSONFormatterConfig) {
+.directive('jsonFormatter', ['RecursionHelper', 'JSONFormatterConfig', '$rootScope', function jsonFormatterDirective(RecursionHelper, JSONFormatterConfig, $rootScope) {
   function escapeString(str) {
     return str.replace('"', '\"');
   }
@@ -196,6 +197,20 @@ angular.module('jsonFormatter', ['RecursionHelper'])
         return '{' + kvs.join(', ') + ellipsis + '}';
       }
     };
+
+    // Listen for the close/open events on $rootScope
+    $rootScope.$on('jsonFormatter:closeAll', function(event, args) {
+        scope.$apply(function() {
+            scope.isOpen = false;
+        });
+    });
+
+    $rootScope.$on('jsonFormatter:openAll', function(event, args) {
+        scope.$apply(function() {
+            scope.isOpen = true;
+        });
+    });
+
   }
 
   return {
@@ -214,7 +229,40 @@ angular.module('jsonFormatter', ['RecursionHelper'])
       return RecursionHelper.compile(element, link);
     }
   };
+}])
+
+.directive('jsonFormatterOpenAll', ['$rootScope', function jsonFormatterOpenDirective($rootScope) {
+
+  function link(scope, element) {
+      element.bind('click', function() {
+          $rootScope.$emit('jsonFormatter:openAll', true);
+      });
+  }
+
+
+  return {
+    link: link,
+    restrict: 'A',
+  };
+
+}])
+
+.directive('jsonFormatterCloseAll', ['$rootScope', function jsonFormatterCloseDirective($rootScope) {
+
+  function link(scope, element) {
+      element.bind('click', function() {
+          $rootScope.$emit('jsonFormatter:closeAll', true);
+      });
+  }
+
+
+  return {
+    link: link,
+    restrict: 'A',
+  };
+
 }]);
+
 
 // Export to CommonJS style imports. Exporting this string makes this valid:
 // angular.module('myApp', [require('jsonformatter')]);
